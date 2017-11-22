@@ -42,7 +42,7 @@ if (env.arg.ios === true || env.arg.xcode === true) {
 
 // Check store id
 let storeId = env.arg.ios === true || env.arg.android === true
-            ? 'com.app_framework.dev_build'
+  ? env.cfg.cordovaProjectName
             : env.arg.xcode === true
             ? env.cfg.appStoreId
             : env.cfg.playStoreId
@@ -420,12 +420,37 @@ let deployDevRules = function (callback) {
   }
 }
 
+let updateIOSNotificationFile = function (callback) {
+  alert('Copying Firebase Notification Files')
+  fs.copy(abs(env.app, 'GoogleService-Info.plist'), abs(binDir, 'GoogleService-Info.plist'), function (err) {
+    if (!err) {
+      alert('IOS Notification File Copied')
+    } else {
+      alert('IOS Notification File Not Found')
+    }
+    callback()
+  })
+}
+let updateAndroidNotificationFile = function (callback) {
+  alert('Copying Firebase Notification Files')
+  fs.copy(abs(env.app, 'google-services.json'), abs(binDir, 'google-services.json'), function (err) {
+    if (!err) {
+      alert('Android Notification File Copied')
+    } else {
+      alert('Android Notification File Not Found')
+    }
+    callback()
+  })
+}
+
 // Run script
 deployDevRules(function () {
   cmd(__dirname, 'node cache-version --version ' + env.arg.version, function () {
     resetCordovaFolder(function () {
       createCordovaProject(function () {
         updateCordovaConfig(function () {
+          updateIOSNotificationFile(function () {
+            updateAndroidNotificationFile(function () {
           updateWwwFolder(function () {
             installCordovaPlugins(function () {
               addCordovaPlatforms(function () {
@@ -497,5 +522,7 @@ deployDevRules(function () {
         })
       })
     })
+  })
+})
   })
 })
