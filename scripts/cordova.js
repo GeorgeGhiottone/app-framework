@@ -42,7 +42,7 @@ if (env.arg.ios === true || env.arg.xcode === true) {
 
 // Check store id
 let storeId = env.arg.ios === true || env.arg.android === true
-  ? env.cfg.appName
+  ? env.cfg.playStoreId
             : env.arg.xcode === true
             ? env.cfg.appStoreId
             : env.cfg.playStoreId
